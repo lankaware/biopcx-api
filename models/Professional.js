@@ -5,7 +5,7 @@ const professional = new Schema(
     {
         name: String,
         cpf: String,
-        specialty_id: ObjectId,
+        specialty_id: mongoose.ObjectId,
         crm: String,
         email: String,
         phone: String,
@@ -13,10 +13,10 @@ const professional = new Schema(
         dismissalDate: Date,
         cns: String,
         cbo: String,
-        internal: String,
+        internal: Boolean,
         availability: [
             {
-                proceudre_id: ObjectId,
+                procedure_id: mongoose.ObjectId,
                 weekDay: String,
                 initialTime: Date,
                 finalTime: Date,

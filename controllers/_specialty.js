@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import "../models/Professional.js";
-const ModelName = mongoose.model("Professional")
-const routeName = "/professional"
+import "../models/_Specialty.js";
+const ModelName = mongoose.model("Specialty")
+const routeName = "/specialty"
 
 export default app => {
     app.get(routeName, async (req, res) => {

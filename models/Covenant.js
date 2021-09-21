@@ -1,7 +1,7 @@
-import mongoose, { isValidObjectId } from "mongoose"
+import mongoose from "mongoose"
 const Schema = mongoose.Schema
 
-const convenant = new Schema(
+const covenant = new Schema(
     {
         name: String,
         contractNumber: String,
@@ -13,7 +13,7 @@ const convenant = new Schema(
                 planName: String,
                 prices: [
                     {
-                        procedure_id: ObjectId,
+                        procedure_id: mongoose.ObjectId,
                         ambValue: Number,
                         price: Number
                     }
@@ -24,4 +24,4 @@ const convenant = new Schema(
     { timestamps: true }
 )
 
-mongoose.model("Convenant", convenant)
+mongoose.model("Covenant", covenant)

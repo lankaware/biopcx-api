@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import "../models/Professional.js";
-const ModelName = mongoose.model("Professional")
-const routeName = "/professional"
+import "../models/Covenant.js";
+const ModelName = mongoose.model("Covenant")
+const routeName = "/covenant"
 
 export default app => {
-    app.get(routeName, async (req, res) => {
+    app.get(routeName, async (req, res) => {  // + _tn
         await ModelName.find()
             .sort('name')
             .then((record) => {
@@ -20,7 +20,7 @@ export default app => {
             })
     })
 
-    app.get(routeName + "name/:name", async (req, res) => {
+    app.get(routeName + "name/:name", async (req, res) => {   // + _tn
         let searchParm = { '$and': [{ 'name': { '$gte': req.params.name } }, { 'name': { '$lte': req.params.name + '~' } }] }
         await ModelName.find(searchParm)
             .select('_id name')

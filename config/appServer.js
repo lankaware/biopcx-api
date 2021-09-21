@@ -1,13 +1,15 @@
 import express, { json } from 'express'
 import cors from 'cors'
 
-import city from '../controllers/city.js'
-import convenant from '../controllers/convenant.js'
+import city from '../controllers/_city.js'
+import specialty from '../controllers/_specialty.js'
+import state from '../controllers/_state.js'
+
+import agenda from '../controllers/agenda.js'
+import covenant from '../controllers/covenant.js'
 import patient from '../controllers/patient.js'
 import procedure from '../controllers/procedure.js'
 import professional from '../controllers/professional.js'
-import specialty from '../controllers/specialty.js'
-import state from '../controllers/state.js'
 
 export default () => {
     const app = express()
@@ -21,12 +23,14 @@ export default () => {
     })
 
     city(app)
-    convenant(app)
+    specialty(app)
+    state(app)
+
+    agenda(app)
+    covenant(app)
     patient(app)
     procedure(app)
     professional(app)
-    specialty(app)
-    state(app)
 
     return app
 }
