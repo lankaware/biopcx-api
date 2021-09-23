@@ -39,8 +39,10 @@ export default app => {
     })
 
     app.get(routeName + "id/:id", async (req, res) => {
+        console.log('params', req.params)
         await ModelName.findById(req.params.id)
-            .then((record) => {
+        .then((record) => {
+                console.log('record', record)
                 return res.json({
                     error: false,
                     record
@@ -69,22 +71,7 @@ export default app => {
             })
     })
 
-    app.put(routeName, async (req, res) => {
-        await ModelName.find(req.body)
-            .then((record) => {
-                return res.json({
-                    error: false,
-                    record,
-                })
-            }).catch((err) => {
-                return res.json({
-                    error: true,
-                    message: err
-                })
-            })
-    })
-
-    app.put(routeName + "/:id", async (req, res) => {
+    app.put(routeName + "id/:id", async (req, res) => {
         await ModelName.updateOne({ _id: req.params.id }, req.body)
             .then((record) => {
                 return res.json({
@@ -100,7 +87,22 @@ export default app => {
             })
     })
 
-    app.delete(routeName + "/:id", async (req, res) => {
+    app.put(routeName, async (req, res) => {
+        await ModelName.find(req.body)
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record,
+                })    
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })    
+            })    
+    })        
+
+    app.delete(routeName + "id/:id", async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
             .then( _ => {
                 return res.json({

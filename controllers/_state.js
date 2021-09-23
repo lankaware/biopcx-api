@@ -69,7 +69,7 @@ export default app => {
             })
     })
 
-    app.put(routeName + "/:id", async (req, res) => {
+    app.put(routeName + "id/:id", async (req, res) => {
         await ModelName.updateOne({ _id: req.params.id }, req.body)
             .then((record) => {
                 return res.json({
@@ -100,7 +100,7 @@ export default app => {
             })
     })
 
-    app.delete(routeName + "/:id", async (req, res) => {
+    app.delete(routeName + "id/:id", async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
             .then( _ => {
                 return res.json({
