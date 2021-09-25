@@ -39,10 +39,8 @@ export default app => {
     })
 
     app.get(routeName + "id/:id", async (req, res) => {
-        console.log('params', req.params)
         await ModelName.findById(req.params.id)
         .then((record) => {
-                console.log('record', record)
                 return res.json({
                     error: false,
                     record

@@ -5,8 +5,23 @@ const routeName = "/professional"
 
 export default app => {
     app.get(routeName, async (req, res) => {
-        await ModelName.find()
-            .sort('name')
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'specialties',
+                    localField: 'specialty_id',
+                    foreignField: '_id',
+                    as: 'specialty'
+                }
+            },
+            {
+                $project: { _id: '$_id', name: '$name', phone: '$phone', specialty: '$specialty.name' }
+            },
+            {
+                $sort: { 'name': 1 },
+            }
+        ])
             .then((record) => {
                 return res.json({
                     error: false,
@@ -39,8 +54,42 @@ export default app => {
     })
 
     app.get(routeName + "id/:id", async (req, res) => {
-        await ModelName.findById(req.params.id)
+        // await ModelName.findById(req.params.id)
+        const _id = mongoose.Types.ObjectId(req.params.id)
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'specialties',
+                    localField: 'specialty_id',
+                    foreignField: '_id',
+                    as: 'specialty'
+                }
+            },
+            {
+                $match: {'_id': _id}
+            },
+            {
+                $project:
+                {
+                    _id: '$_id',
+                    name: '$name',
+                    phone: '$phone',
+                    specialty_id: '$specialty_id',
+                    specialty_name: '$specialty.name',
+                    crm: '$crm',
+                    email: '$email',
+                    phone: '$phone',
+                    admissionDate: '$admissionDate',
+                    dismissalDate: '$dismissalDate',
+                    cns: '$cns',
+                    cbo: '$cbo',
+                    internal: '$internal',
+                }
+            },
+        ])
             .then((record) => {
+                console.log(record)
                 return res.json({
                     error: false,
                     record
@@ -86,7 +135,28 @@ export default app => {
     })
 
     app.put(routeName, async (req, res) => {
-        await ModelName.find(req.body)
+        // await ModelName.find(req.body)
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'specialties',
+                    localField: 'specialty_id',
+                    foreignField: '_id',
+                    as: 'specialty'
+                }
+            },
+            {
+                $match: req.body
+            },
+            {
+                $project: { _id: '$_id', name: '$name', phone: '$phone', specialty: '$specialty.name' }
+            },
+            {
+                $sort: { 'name': 1 },
+            }
+        ])
+
             .then((record) => {
                 return res.json({
                     error: false,
@@ -102,7 +172,7 @@ export default app => {
 
     app.delete(routeName + "id/:id", async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
-            .then( _ => {
+            .then(_ => {
                 return res.json({
                     error: false,
                     message: "Registro removido.",
