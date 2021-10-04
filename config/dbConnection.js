@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const dbconnect = () => {
-        // mongoose.connect('mongodb://localhost:27017/biopcx', {
-        // useNewUrlParser: true,
-        // useUnifiedTopology: true
-        mongoose.connect('mongodb+srv://lankadb:gynkJMmuQE2J45u@cluster0.qifx3.mongodb.net/biopcx?retryWrites=true&w=majority', {
+        mongoose.connect(process.env.DB_CONN, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }).then(() => {

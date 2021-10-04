@@ -85,11 +85,13 @@ export default app => {
                     cns: '$cns',
                     cbo: '$cbo',
                     internal: '$internal',
+                    availability: '$availability'
                 }
             },
         ])
             .then((record) => {
                 console.log(record)
+                console.log(record[0].availability)
                 return res.json({
                     error: false,
                     record

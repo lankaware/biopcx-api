@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for medical clinic system",
   "main": "index.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/lankaware/biopcx-api#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongodb": "^4.1.2",
     "mongoose": "^6.0.5"
