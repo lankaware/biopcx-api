@@ -1,27 +1,12 @@
 import mongoose from 'mongoose';
-import "../models/Professional.js";
-const ModelName = mongoose.model("Professional")
-const routeName = "/professional"
+import "../models/User.js";
+const ModelName = mongoose.model("User")
+const routeName = "/user"
 
 export default app => {
     app.get(routeName, async (req, res) => {
-        await ModelName.aggregate([
-            {
-                $lookup:
-                {
-                    from: 'specialties',
-                    localField: 'specialty_id',
-                    foreignField: '_id',
-                    as: 'specialty'
-                }
-            },
-            {
-                $project: { _id: '$_id', name: '$name', phone: '$phone', specialty: '$specialty.name' }
-            },
-            {
-                $sort: { 'name': 1 },
-            }
-        ])
+        await ModelName.find()
+            .sort('name')
             .then((record) => {
                 return res.json({
                     error: false,
@@ -53,42 +38,25 @@ export default app => {
             })
     })
 
+    app.get(routeName + "login/:login", async (req, res) => {
+        let searchParm = { login: req.params.login } 
+        await ModelName.find(searchParm)
+            .select('name login passw')
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record
+                })
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
+    })
+
     app.get(routeName + "id/:id", async (req, res) => {
-        // await ModelName.findById(req.params.id)
-        const _id = mongoose.Types.ObjectId(req.params.id)
-        await ModelName.aggregate([
-            {
-                $lookup:
-                {
-                    from: 'specialties',
-                    localField: 'specialty_id',
-                    foreignField: '_id',
-                    as: 'specialty'
-                }
-            },
-            {
-                $match: {'_id': _id}
-            },
-            {
-                $project:
-                {
-                    _id: '$_id',
-                    name: '$name',
-                    phone: '$phone',
-                    specialty_id: '$specialty_id',
-                    specialty_name: '$specialty.name',
-                    crm: '$crm',
-                    email: '$email',
-                    phone: '$phone',
-                    admissionDate: '$admissionDate',
-                    dismissalDate: '$dismissalDate',
-                    cns: '$cns',
-                    cbo: '$cbo',
-                    internal: '$internal',
-                    availability: '$availability'
-                }
-            },
-        ])
+        await ModelName.findById(req.params.id)
             .then((record) => {
                 return res.json({
                     error: false,
@@ -135,28 +103,7 @@ export default app => {
     })
 
     app.put(routeName, async (req, res) => {
-        // await ModelName.find(req.body)
-        await ModelName.aggregate([
-            {
-                $lookup:
-                {
-                    from: 'specialties',
-                    localField: 'specialty_id',
-                    foreignField: '_id',
-                    as: 'specialty'
-                }
-            },
-            {
-                $match: req.body
-            },
-            {
-                $project: { _id: '$_id', name: '$name', phone: '$phone', specialty: '$specialty.name' }
-            },
-            {
-                $sort: { 'name': 1 },
-            }
-        ])
-
+        await ModelName.find(req.body)
             .then((record) => {
                 return res.json({
                     error: false,
@@ -172,7 +119,7 @@ export default app => {
 
     app.delete(routeName + "id/:id", async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
-            .then(_ => {
+            .then( _ => {
                 return res.json({
                     error: false,
                     message: "Registro removido.",

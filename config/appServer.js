@@ -4,6 +4,7 @@ import cors from 'cors'
 import city from '../controllers/_city.js'
 import specialty from '../controllers/_specialty.js'
 import state from '../controllers/_state.js'
+import user from '../controllers/user.js'
 
 import agenda from '../controllers/agenda.js'
 import covenant from '../controllers/covenant.js'
@@ -25,6 +26,7 @@ export default () => {
     city(app)
     specialty(app)
     state(app)
+    user(app)
 
     agenda(app)
     covenant(app)
