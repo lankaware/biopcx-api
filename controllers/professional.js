@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import "../models/Professional.js";
+import tokenok from "../config/tokenValidate.js"
+
 const ModelName = mongoose.model("Professional")
 const routeName = "/professional"
 
 export default app => {
-    app.get(routeName, async (req, res) => {
+    app.get(routeName, tokenok, async (req, res) => {
         await ModelName.aggregate([
             {
                 $lookup:
@@ -35,7 +37,7 @@ export default app => {
             })
     })
 
-    app.get(routeName + "name/:name", async (req, res) => {
+    app.get(routeName + "name/:name", tokenok, async (req, res) => {
         let searchParm = { '$and': [{ 'name': { '$gte': req.params.name } }, { 'name': { '$lte': req.params.name + '~' } }] }
         await ModelName.find(searchParm)
             .select('_id name')
@@ -53,7 +55,7 @@ export default app => {
             })
     })
 
-    app.get(routeName + "id/:id", async (req, res) => {
+    app.get(routeName + "id/:id", tokenok, async (req, res) => {
         // await ModelName.findById(req.params.id)
         const _id = mongoose.Types.ObjectId(req.params.id)
         await ModelName.aggregate([
@@ -67,7 +69,7 @@ export default app => {
                 }
             },
             {
-                $match: {'_id': _id}
+                $match: { '_id': _id }
             },
             {
                 $project:
@@ -102,7 +104,7 @@ export default app => {
             })
     })
 
-    app.post(routeName, async (req, res) => {
+    app.post(routeName, tokenok, async (req, res) => {
         await ModelName.create(req.body)
             .then((record) => {
                 return res.json({
@@ -118,7 +120,7 @@ export default app => {
             })
     })
 
-    app.put(routeName + "id/:id", async (req, res) => {
+    app.put(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.updateOne({ _id: req.params.id }, req.body)
             .then((record) => {
                 return res.json({
@@ -134,7 +136,7 @@ export default app => {
             })
     })
 
-    app.put(routeName, async (req, res) => {
+    app.put(routeName, tokenok, async (req, res) => {
         // await ModelName.find(req.body)
         await ModelName.aggregate([
             {
@@ -170,7 +172,7 @@ export default app => {
             })
     })
 
-    app.delete(routeName + "id/:id", async (req, res) => {
+    app.delete(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
             .then(_ => {
                 return res.json({

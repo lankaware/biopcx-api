@@ -1,5 +1,6 @@
 import express, { json } from 'express'
 import cors from 'cors'
+import jsonwebtoken from 'jsonwebtoken'
 
 import city from '../controllers/_city.js'
 import specialty from '../controllers/_specialty.js'
