@@ -7,9 +7,57 @@ const routeName = "/agenda"
 
 export default app => {
     app.get(routeName, tokenok, async (req, res) => {
-        await ModelName.find()
-            .sort('name')
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'professionals',
+                    localField: 'professional_id',
+                    foreignField: '_id',
+                    as: 'professional'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'patients',
+                    localField: 'patient_id',
+                    foreignField: '_id',
+                    as: 'patient'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'procedures',
+                    localField: 'procedure_id',
+                    foreignField: '_id',
+                    as: 'procedure'
+                }
+            },
+            {
+                $project:
+                {
+                    _id: '$_id',
+                    date: '$date',
+                    initialTime: '$initialTime',
+                    finalTime: '$finalTime',
+                    professional_id: '$professional_id',
+                    professional_name: '$professional.name',
+                    patient_id: '$patient_id',
+                    patient_name: '$patient.name',
+                    procedure_id: '$procedure_id',
+                    procedure_name: '$procedure.name',
+                    planName: '$planName',
+                    status: '$status'
+                }
+            },
+            {
+                $sort: { 'date': 1 },
+            }
+        ])
             .then((record) => {
+                console.log(record)
                 return res.json({
                     error: false,
                     record
@@ -23,7 +71,59 @@ export default app => {
     })
 
     app.get(routeName + "id/:id", async (req, res) => {
-        await ModelName.findById(req.params.id)
+        const _id = mongoose.Types.ObjectId(req.params.id)
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'professionals',
+                    localField: 'professional_id',
+                    foreignField: '_id',
+                    as: 'professional'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'patients',
+                    localField: 'patient_id',
+                    foreignField: '_id',
+                    as: 'patient'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'procedures',
+                    localField: 'procedure_id',
+                    foreignField: '_id',
+                    as: 'procedure'
+                }
+            },
+            {
+                $match: { '_id': _id }
+            },
+           {
+                $project:
+                {
+                    _id: '$_id',
+                    date: '$date',
+                    initialTime: '$initialTime',
+                    finalTime: '$finalTime',
+                    professional_id: '$professional_id',
+                    professional_name: '$professional.name',
+                    patient_id: '$patient_id',
+                    patient_name: '$patient.name',
+                    procedure_id: '$procedure_id',
+                    procedure_name: '$procedure.name',
+                    planName: '$planName',
+                    status: '$status'
+                }
+            },
+            {
+                $sort: { 'date': 1 },
+            }
+        ])
             .then((record) => {
                 return res.json({
                     error: false,

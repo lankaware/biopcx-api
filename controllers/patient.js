@@ -7,9 +7,26 @@ const routeName = "/patient"
 
 export default app => {
     app.get(routeName, tokenok, async (req, res) => {
-        await ModelName.find()
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'covenants',
+                    localField: 'covenant_id',
+                    foreignField: '_id',
+                    as: 'covenant'
+                }
+            },
+            {
+                $project: { _id: '$_id', name: '$name', phone: '$phone', covenant_name: '$covenant.name' }
+            },
+            {
+                $sort: { 'name': 1 },
+            }
+        ])
             .sort('name')
             .then((record) => {
+                console.log(record)
                 return res.json({
                     error: false,
                     record
@@ -41,13 +58,108 @@ export default app => {
     })
 
     app.get(routeName + "id/:id", tokenok, async (req, res) => {
-        await ModelName.findById(req.params.id)
+        const _id = mongoose.Types.ObjectId(req.params.id)
+        // await ModelName.findById(req.params.id)
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'city',
+                    localField: 'city_id',
+                    foreignField: '_id',
+                    as: 'city'
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: 'covenant',
+                    localField: 'covenant_id',
+                    foreignField: '_id',
+                    as: 'covenant'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'city',
+                    localField: 'birthCity_id',
+                    foreignField: '_id',
+                    as: 'birthCity'
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: 'state',
+                    localField: 'rgState_id',
+                    foreignField: '_id',
+                    as: 'rgState'
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: 'patient',
+                    localField: 'relative_id',
+                    foreignField: '_id',
+                    as: 'relative'
+                },
+            },
+            {
+                $match: { '_id': _id }
+            },
+            {
+                $project:
+                {
+                    _id: '$_id',
+                    name: '$name',
+                    phone: '$phone',
+                    email: '$email',
+                    zip: '$zip',
+                    address: '$address',
+                    addressNumber: '$addressNumber',
+                    addressComplement: '$addressComplement',
+                    neighborhood: '$neighborhood',
+                    city_id: '$city_id',
+                    city_name: '$city.name',
+                    covenant_id: '$covenant_id',
+                    covenant_name: '$covenant.name',
+                    covPlan: '$covPlan',
+                    covRegistration: '$covRegistration',
+                    covValid: '$covValid',
+                    birthDate: '$birthDate',
+                    birthCity_id: '$birthCity_id',
+                    birthCity_name: '$birthCity.name',
+                    cpf: '$cpf',
+                    rg: '$rg',
+                    rgDate: '$rgDate',
+                    rgAgency: '$rgAgency',
+                    rgState_id: '$rgState_id',
+                    rgState_name: '$rgState.name',
+                    mothersName: '$mothersName',
+                    fathersName: '$fathersName',
+                    gender: '$gender',
+                    maritalStatus: '$maritalStatus',
+                    blodyType: '$blodyType',
+                    cns: '$cns',
+                    indicatedBy: '$indicatedBy',
+                    responsible: '$responsible',
+                    responsiblePhone: '$responsiblePhone',
+                    registerDate: '$registerDate',
+                    relative_id: '$relative_id',
+                    relative_name: '$relative.name',
+                    relativeType: '$relativeType',
+                }
+            },
+        ])
             .then((record) => {
                 return res.json({
                     error: false,
                     record
                 })
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 return res.json({
                     error: true,
                     message: err
@@ -104,7 +216,7 @@ export default app => {
 
     app.delete(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
-            .then( _ => {
+            .then(_ => {
                 return res.json({
                     error: false,
                     message: "Registro removido.",

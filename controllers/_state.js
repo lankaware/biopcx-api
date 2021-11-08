@@ -104,7 +104,7 @@ export default app => {
 
     app.delete(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
-            .then( _ => {
+            .then(_ => {
                 return res.json({
                     error: false,
                     message: "Registro removido.",
@@ -117,4 +117,33 @@ export default app => {
                 })
             })
     })
+
+    app.post(routeName + 'load', async (req, res) => {
+
+        req.body.UF.map(line => {
+            console.log('body', line)
+            ModelName.create(line)
+        })
+        return res.json({
+            error: false,
+        })
+
+
+        await ModelName.create(req.body)
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record,
+                })
+            })
+            .catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err,
+                })
+            })
+    })
 }
+
+
+
