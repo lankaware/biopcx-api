@@ -2,6 +2,8 @@ import jsonwebtoken from 'jsonwebtoken'
 
 const verifyToken = async (req, res, next) => {
 
+    //return next()
+    
     const authr = req.headers.authorization
     if (!authr) {
         return false

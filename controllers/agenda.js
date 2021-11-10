@@ -57,7 +57,6 @@ export default app => {
             }
         ])
             .then((record) => {
-                console.log(record)
                 return res.json({
                     error: false,
                     record
