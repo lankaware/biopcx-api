@@ -112,6 +112,7 @@ export default app => {
                 $project:
                 {
                     _id: '$_id',
+                    photo: '$photo',
                     name: '$name',
                     phone: '$phone',
                     email: '$email',
