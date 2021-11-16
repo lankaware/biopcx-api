@@ -26,7 +26,6 @@ export default app => {
         ])
             .sort('name')
             .then((record) => {
-                console.log(record)
                 return res.json({
                     error: false,
                     record
