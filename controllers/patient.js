@@ -18,7 +18,7 @@ export default app => {
                 }
             },
             {
-                $project: { _id: '$_id', name: '$name', phone: '$phone', covenant_name: '$covenant.name' }
+                $project: { _id: '$_id', name: '$name', lastname: '$lastname', phone: '$phone', covenant_name: '$covenant.name' }
             },
             {
                 $sort: { 'name': 1 },
