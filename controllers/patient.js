@@ -115,6 +115,7 @@ export default app => {
                     _id: '$_id',
                     photo: '$photo',
                     name: '$name',
+                    lastname: '$lastname',
                     phone: '$phone',
                     email: '$email',
                     zip: '$zip',

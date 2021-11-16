@@ -5,6 +5,7 @@ const patient = new Schema(
     {   
         photo: String,
         name: String,
+        lastname: String,
         phone: String,
         email: String,
         zip: String,
