@@ -12,6 +12,7 @@ import covenant from '../controllers/covenant.js'
 import patient from '../controllers/patient.js'
 import procedure from '../controllers/procedure.js'
 import professional from '../controllers/professional.js'
+import medicine from '../controllers/medicine.js'
 
 export default () => {
     const app = express()
@@ -34,6 +35,7 @@ export default () => {
     patient(app)
     procedure(app)
     professional(app)
+    medicine(app)
 
     return app
 }
