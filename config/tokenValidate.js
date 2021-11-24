@@ -1,6 +1,6 @@
-import jsonwebtoken from 'jsonwebtoken'
+const jsonwebtoken = require('jsonwebtoken')
 
-const verifyToken = async (req, res, next) => {
+module.exports = async (req, res, next) => {
 
     //return next()
     
@@ -21,4 +21,3 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
-export default verifyToken
