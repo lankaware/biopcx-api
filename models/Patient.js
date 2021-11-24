@@ -70,4 +70,7 @@ const patient = new Schema(
   { timestamps: true }
 );
 
+
+
+
 mongoose.model("Patient", patient);
