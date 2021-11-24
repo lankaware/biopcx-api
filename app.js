@@ -1,5 +1,5 @@
-import dbconnect from './config/dbConnection.js'
-import server from './config/appServer.js'
+const dbconnect = require('./config/dbConnection.js')
+const server = require('./config/appServer.js')
 
 dbconnect()
 const app = server()
