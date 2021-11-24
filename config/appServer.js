@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const consign = require('consign')
 
-modeule.exports = () => {
+module.exports = () => {
     const app = express()
     app.use(express.json())
     app.use((req, res, next) => {
