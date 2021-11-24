@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
-import "../models/Agenda.js";
-import tokenok from "../config/tokenValidate.js"
+const mongoose = require('mongoose')
+require("../models/Agenda.js")
+const tokenok = require("../config/tokenValidate.js")
 
 const ModelName = mongoose.model("Agenda")
 const routeName = "/agenda"
 
-export default app => {
+module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
         await ModelName.aggregate([
             {

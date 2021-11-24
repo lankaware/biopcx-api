@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
-import "../models/Covenant.js";
-import tokenok from "../config/tokenValidate.js"
+const mongoose = require('mongoose')
+require("../models/Covenant.js")
+const tokenok = require("../config/tokenValidate.js")
 
 const ModelName = mongoose.model("Covenant")
 const routeName = "/covenant"
 
-export default app => {
+module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {  // + _tn
         await ModelName.find()
             .sort('name')
