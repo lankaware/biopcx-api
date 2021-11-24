@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import '../models/medicine.js'
+import '../models/Medicine.js'
 import tokenok from "../config/tokenValidate.js"
 
 const ModelName = mongoose.model("Medicine")
