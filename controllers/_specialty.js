@@ -1,11 +1,12 @@
-import mongoose from 'mongoose';
-import "../models/_Specialty.js";
-import tokenok from "../config/tokenValidate.js"
+const mongoose =  require('mongoose')
+const tokenok =  require("../config/tokenValidate.js")
+ require("../models/_Specialty.js")
+
 
 const ModelName = mongoose.model("Specialty")
 const routeName = "/specialty"
 
-export default app => {
+module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
         await ModelName.find()
             .sort('name')

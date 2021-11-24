@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-import "../models/Patient.js";
-import tokenok from "../config/tokenValidate.js";
+const mongoose = require("mongoose")
+require("../models/Patient.js")
+const tokenok = require("../config/tokenValidate.js")
 
 const ModelName = mongoose.model("Patient");
 const routeName = "/patient";
 
-export default (app) => {
+module.exports = app => {
   app.get(routeName, tokenok, async (req, res) => {
     await ModelName.aggregate([
       {

@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-import "../models/User.js";
+const mongoose = require('mongoose')
+require("../models/User.js")
 const ModelName = mongoose.model("User")
 const routeName = "/user"
-import jsonwebtoken from 'jsonwebtoken'
-import tokenok from "../config/tokenValidate.js"
-import CryptoJS from 'crypto-js'
+const jsonwebtoken = require('jsonwebtoken')
+const tokenok = require("../config/tokenValidate.js")
+const CryptoJS = require('crypto-js')
 
-export default app => {
+module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
         await ModelName.find()
             .sort('name')
