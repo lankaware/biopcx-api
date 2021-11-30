@@ -45,7 +45,7 @@ const patient = new Schema(
     lastAppoint: Date,
     hist: String,
     familyHist: String,
-    PatientHist: String,
+    patientHist: String,
     catheter: String,
     surgery: String,
     freeTextOneTitle: String,
