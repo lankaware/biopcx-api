@@ -6,6 +6,8 @@ const patient = new Schema(
     photo: String,
     name: String,
     lastname: String,
+    internalRegister: String,
+    unit_id: mongoose.ObjectId,
     phone: String,
     email: String,
     zip: String,
@@ -43,7 +45,7 @@ const patient = new Schema(
     imc: Number,
     firstAppoint: Date,
     lastAppoint: Date,
-    hist: String,
+    clinicHist: String,
     familyHist: String,
     patientHist: String,
     catheter: String,
@@ -52,13 +54,6 @@ const patient = new Schema(
     freeTextOne: String,
     freeTextTwoTitle: String,
     freeTextTwo: String,
-
-    evolution: [
-      {
-        dateTime: Date,
-        description: String,
-      },
-    ],
     prescription: [
       {
         date: Date,
