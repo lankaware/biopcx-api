@@ -62,8 +62,7 @@ const patient = new Schema(
     prescription: [
       {
         date: Date,
-        drug: String,
-        dosage: String,
+        prescContent: String,
       },
     ],
   },

@@ -171,6 +171,7 @@ module.exports = app => {
           freeTextOne: "$freeTextOne",
           freeTextTwoTitle: "$freeTextTwoTitle",
           freeTextTwo: "$freeTextTwo",
+          prescription: "$prescription"
         },
       },
     ])
