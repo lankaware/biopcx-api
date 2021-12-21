@@ -174,18 +174,6 @@ module.exports = app => {
           imc: "$imc",
           firstAppoint: "$firstAppoint",
           lastAppoint: "$lastAppoint",
-<<<<<<< HEAD
-          hist: "$hist",
-          familyHist: "$familyHist",
-          PatientHist: "$PatientHist",
-          catheter: "$catheter",
-          surgery: "$surgery",
-          freeTextOneTitle: "$freeTextOneTitle",
-          freeTextOne: "$freeTextOne",
-          freeTextTwoTitle: "$freeTextTwoTitle",
-          freeTextTwo: "$freeTextTwo",
-          prescription: "$prescription"
-=======
           clinicHist: 1,
           familyHist: 1,
           patientHist: 1,
@@ -195,7 +183,7 @@ module.exports = app => {
           freeTextOne: 1,
           freeTextTwoTitle: 1,
           freeTextTwo: 1,
->>>>>>> 6e4e8901fe1ae78f38967c58a4a8e67ca7dd66af
+          prescription: "$prescription"
         },
       },
     ])
