@@ -46,6 +46,7 @@ module.exports = app => {
                     professional_name: '$professional.name',
                     patient_id: '$patient_id',
                     patient_name: '$patient.name',
+                    patient_phone: '$patient.phone',
                     procedure_id: '$procedure_id',
                     procedure_name: '$procedure.name',
                     planName: '$planName',
