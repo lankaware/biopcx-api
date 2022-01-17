@@ -69,7 +69,6 @@ module.exports = app => {
   });
 
   app.get(routeName + "id/:id", tokenok, async (req, res) => {
-    console.log('patientid', req.params.id)
     const _id = mongoose.Types.ObjectId(req.params.id);
     // await ModelName.findById(req.params.id)
     await ModelName.aggregate([
@@ -165,7 +164,7 @@ module.exports = app => {
           indicatedBy: "$indicatedBy",
           responsible: "$responsible",
           responsiblePhone: "$responsiblePhone",
-          registerDate: "$registerDate",
+          // registerDate: "$registerDate",
           relative_id: "$relative_id",
           relative_name: '', //"$relative.name",
           relativeType: "$relativeType",
@@ -183,7 +182,8 @@ module.exports = app => {
           freeTextOne: 1,
           freeTextTwoTitle: 1,
           freeTextTwo: 1,
-          prescription: "$prescription"
+          prescription: "$prescription",
+          createdAt: 1,
         },
       },
     ])
