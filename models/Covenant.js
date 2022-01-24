@@ -7,20 +7,8 @@ const covenant = new Schema(
         contractNumber: String,
         registerDate: Date,
         billingDay: Number,
-        dueDay: Number,
-        plans: [
-            {
-                planName: String,
-                prices: [
-                    {
-                        procedure_id: mongoose.ObjectId,
-                        ambValue: Number,
-                        price: Number
-                    }
-                ]
-            }
-        ]
-    },
+        paymentDay: Number,
+     },
     { timestamps: true }
 )
 
