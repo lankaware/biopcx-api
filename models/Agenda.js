@@ -11,7 +11,6 @@ const agenda = new Schema(
         procedure_id: mongoose.ObjectId,
         planName: String,
         status: String,
-        
     },
     { timestamps: true }
 )

@@ -6,7 +6,7 @@ const price = new Schema(
         covenantplan_id: mongoose.ObjectId,
         procedure_id: mongoose.ObjectId,
         ambPrice: Number,
-        Price: Number,
+        price: Number,
     },
     { timestamps: true }
 )
