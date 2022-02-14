@@ -182,6 +182,7 @@ module.exports = app => {
           freeTextOne: 1,
           freeTextTwoTitle: 1,
           freeTextTwo: 1,
+          alert:1,
           prescription: "$prescription",
           createdAt: 1,
         },
