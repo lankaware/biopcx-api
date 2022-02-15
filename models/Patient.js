@@ -54,6 +54,7 @@ const patient = new Schema(
     freeTextOne: String,
     freeTextTwoTitle: String,
     freeTextTwo: String,
+    alert: String,
     prescription: [
       {
         date: Date,
