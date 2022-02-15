@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-require("../models/Covenant.js")
+require("../models/Price.js")
 const tokenok = require("../config/tokenValidate.js")
 
-const ModelName = mongoose.model("Covenant")
-const routeName = "/covenant"
+const ModelName = mongoose.model("Price")
+const routeName = "/price"
 
 module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {  // + _tn
@@ -25,8 +25,7 @@ module.exports = app => {
     app.get(routeName + "attendance/:plan/:procedure", tokenok, async (req, res) => {   // + _tn
         let searchParm = { '$and': [{ 'covenantplan_id': req.params.plan }, { 'procedure_id': req.params.procedure }] }
         await ModelName.find(searchParm)
-            .select('_id name')
-            .sort('name')
+            .select('_id price')
             .then((record) => {
                 return res.json({
                     error: false,
@@ -42,6 +41,23 @@ module.exports = app => {
 
     app.get(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.findById(req.params.id)
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record
+                })
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
+    })
+
+    app.get(routeName + "covenant/:id", tokenok, async (req, res) => {   // + _tn
+        let searchParm = { 'covenant_id': req.params.id }
+        await ModelName.find(searchParm)
+            .select('_id ambPrice price')
             .then((record) => {
                 return res.json({
                     error: false,

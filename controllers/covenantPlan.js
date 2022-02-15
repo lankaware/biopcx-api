@@ -40,6 +40,24 @@ module.exports = app => {
             })
     })
 
+    app.get(routeName + "covenant/:id", tokenok, async (req, res) => {   // + _tn
+        let searchParm = { 'covenant_id': req.params.id }
+        await ModelName.find(searchParm)
+            .select('_id name')
+            .sort('name')
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record
+                })
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
+    })
+
     app.get(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.findById(req.params.id)
             .then((record) => {
