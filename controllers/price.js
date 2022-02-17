@@ -55,9 +55,44 @@ module.exports = app => {
     })
 
     app.get(routeName + "covenant/:id", tokenok, async (req, res) => {   // + _tn
-        let searchParm = { 'covenant_id': req.params.id }
-        await ModelName.find(searchParm)
-            .select('_id ambPrice price')
+        const _id = mongoose.Types.ObjectId(req.params.id)
+        await ModelName.aggregate([
+            {
+                $lookup: {
+                    from: 'procedures',
+                    localField: 'procedure_id',
+                    foreignField: '_id',
+                    as: 'procedure'
+                },
+                $lookup: {
+                    from: 'covenantplans',
+                    localField: 'covenantplan_id',
+                    foreignField: '_id',
+                    as: 'covenantplan'
+                },
+            },
+            {
+                $match: {
+                    '_id': _id
+                }
+            },
+            {
+                $project: {
+                    _id: '$_id',
+                    covenantplan_id: 1,
+                    covenantplan_name: '$covenantplan.name',
+                    procedure_id: 1,
+                    procedure_name: '$procedure.name',
+                    ambPrice: 1,
+                    price: 1,
+                },
+            },
+            {
+                $sort: {
+                    'name': 1
+                },
+            },
+        ])
             .then((record) => {
                 return res.json({
                     error: false,
@@ -120,7 +155,7 @@ module.exports = app => {
 
     app.delete(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
-            .then( _ => {
+            .then(_ => {
                 return res.json({
                     error: false,
                     message: "Registro removido.",
