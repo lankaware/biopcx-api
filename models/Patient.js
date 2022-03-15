@@ -61,6 +61,12 @@ const patient = new Schema(
         prescContent: String,
       },
     ],
+    request: [
+      {
+        date: Date,
+        reqContent: String,
+      },
+    ],
   },
   { timestamps: true }
 );

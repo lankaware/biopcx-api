@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken')
 
 module.exports = async (req, res, next) => {
 
-    //return next()
+    return next()
     
     const authr = req.headers.authorization
     if (!authr) {
