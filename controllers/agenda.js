@@ -1,9 +1,13 @@
 const mongoose = require('mongoose')
 require("../models/Agenda.js")
+require("../models/Professional.js")
 const tokenok = require("../config/tokenValidate.js")
+const professional = require('./professional.js')
 
 const ModelName = mongoose.model("Agenda")
 const routeName = "/agenda"
+
+const ModelProfessional = mongoose.model("Professional")
 
 module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
@@ -171,11 +175,8 @@ module.exports = app => {
     })
 
     app.put(routeName, tokenok, async (req, res) => {
-        console.log(req.body)
         let query = req.body
         let dateFilter = new Date(query.dateFilter)
-        // await ModelName.find({date:{$gte: new Date(query.dateFilter)}}) // 
-        // await ModelName.find({ date: { $gte: new Date("2022-05-12") } })
         await ModelName.aggregate([
             {
                 $lookup:
@@ -228,53 +229,76 @@ module.exports = app => {
             {
                 $sort: { 'date': 1 },
             }
-        ]).then((record) => {
-            date = new Date();
-            record.push(
-                {
-                    "_id": "1",
-                    "date": date,
-                    "initialTime": "",
-                    "finalTime": "",
-                    "professional_id": "",
-                    "professional_name": [
-                        ""
-                    ],
-                    "patient_id": "",
-                    "patient_name": [
-                        ""
-                    ],
-                    "patient_phone": [
-                        ""
-                    ],
-                    "procedure_id": "",
-                    "procedure_name": [
-                        ""
-                    ],
-                    "planName": "",
-                    "status": ""
-                }
-            )
-            console.log(record)
-            return res.json({
-                error: false,
-                record,
+        ])
+            .then(async records => {
+                var addedAgenda = []
+                await _completeAgenda(dateFilter)
+                    .then(newAgenda => {
+                        addedAgenda = [...records, ...newAgenda]
+                    })
+                return addedAgenda
             })
-        }).catch((err) => {
-            return res.json({
-                error: true,
-                message: err 
+            .then(record => {
+                return res.json({
+                    error: false,
+                    record,
+                })
             })
-        })
+            .catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
     })
+
+    const _completeAgenda = async (dateFilter) => {
+        let refDay = (dateFilter.getDay() + 1).toString()
+        var emptyAgenda = []
+        await ModelProfessional.find()
+        .then(result => {
+                var newId = 0
+                for (let professional of result) {
+                    for (let profAvail of professional.availability) {
+                        if (profAvail.weekDay !== refDay) continue
+                        if (profAvail.interval === 0) continue
+                        var initialTime = new Date(profAvail.initialTime.getTime())
+                        var nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
+                        while (nextTime <= profAvail.finalTime) {
+                            newId++
+                            emptyAgenda.push(
+                                {
+                                    "_id": newId,
+                                    "date": dateFilter,
+                                    "initialTime": initialTime,
+                                    "finalTime": nextTime,
+                                    "professional_id": professional._id,
+                                    "professional_name": [professional.name],
+                                    "patient_id": "",
+                                    "patient_name": [""],
+                                    "patient_phone": [""],
+                                    "procedure_id": "",
+                                    "procedure_name": [""],
+                                    "planName": "",
+                                    "status": ""
+                                }
+                            )
+                            initialTime = nextTime
+                            nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
+                        }
+                    }
+                }
+            })
+        return emptyAgenda
+    }
 
     app.delete(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.deleteOne({ _id: req.params.id })
             .then(_ => {
                 return res.json({
                     error: false,
-                    message: "Registro removido.", 
-                }) 
+                    message: "Registro removido.",
+                })
             })
             .catch((err) => {
                 return res.json({
