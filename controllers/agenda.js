@@ -71,6 +71,7 @@ module.exports = app => {
     })
 
     app.get(routeName + "id/:id", async (req, res) => {
+
         const _id = mongoose.Types.ObjectId(req.params.id)
         await ModelName.aggregate([
             {
@@ -103,7 +104,7 @@ module.exports = app => {
             {
                 $match: { '_id': _id }
             },
-           {
+            {
                 $project:
                 {
                     _id: '$_id',
@@ -170,18 +171,101 @@ module.exports = app => {
     })
 
     app.put(routeName, tokenok, async (req, res) => {
-        await ModelName.find(req.body)
-            .then((record) => {
-                return res.json({
-                    error: false,
-                    record,
-                })
-            }).catch((err) => {
-                return res.json({
-                    error: true,
-                    message: err
-                })
+        console.log(req.body)
+        let query = req.body
+        let dateFilter = new Date(query.dateFilter)
+        // await ModelName.find({date:{$gte: new Date(query.dateFilter)}}) // 
+        // await ModelName.find({ date: { $gte: new Date("2022-05-12") } })
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'professionals',
+                    localField: 'professional_id',
+                    foreignField: '_id',
+                    as: 'professional'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'patients',
+                    localField: 'patient_id',
+                    foreignField: '_id',
+                    as: 'patient'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'procedures',
+                    localField: 'procedure_id',
+                    foreignField: '_id',
+                    as: 'procedure'
+                }
+            },
+            {
+                $match: { 'date': { "$gte": dateFilter } }
+            },
+            {
+                $project:
+                {
+                    _id: '$_id',
+                    date: '$date',
+                    initialTime: '$initialTime',
+                    finalTime: '$finalTime',
+                    professional_id: '$professional_id',
+                    professional_name: '$professional.name',
+                    patient_id: '$patient_id',
+                    patient_name: '$patient.name',
+                    patient_phone: '$patient.phone',
+                    procedure_id: '$procedure_id',
+                    procedure_name: '$procedure.name',
+                    planName: '$planName',
+                    status: '$status'
+                }
+            },
+            {
+                $sort: { 'date': 1 },
+            }
+        ]).then((record) => {
+            date = new Date();
+            record.push(
+                {
+                    "_id": "1",
+                    "date": date,
+                    "initialTime": "",
+                    "finalTime": "",
+                    "professional_id": "",
+                    "professional_name": [
+                        ""
+                    ],
+                    "patient_id": "",
+                    "patient_name": [
+                        ""
+                    ],
+                    "patient_phone": [
+                        ""
+                    ],
+                    "procedure_id": "",
+                    "procedure_name": [
+                        ""
+                    ],
+                    "planName": "",
+                    "status": ""
+                }
+            )
+            console.log(record)
+            return res.json({
+                error: false,
+                record,
             })
+        }).catch((err) => {
+            return res.json({
+                error: true,
+                message: err 
+            })
+        })
     })
 
     app.delete(routeName + "id/:id", tokenok, async (req, res) => {
@@ -189,8 +273,8 @@ module.exports = app => {
             .then(_ => {
                 return res.json({
                     error: false,
-                    message: "Registro removido.",
-                })
+                    message: "Registro removido.", 
+                }) 
             })
             .catch((err) => {
                 return res.json({
