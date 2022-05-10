@@ -178,7 +178,7 @@ module.exports = app => {
         let query = req.body
         let dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
         let tomorrow = new Date(dateFilter)
-        tomorrow.setDate(tomorrow.getDate + 1);
+        tomorrow.setDate(tomorrow.getDate() + 1)
         await ModelName.aggregate([
             {
                 $lookup:
@@ -208,7 +208,7 @@ module.exports = app => {
                 }
             },
             {
-                $match: {'date': { "$gte": dateFilter, "$lt": tomorrow }}
+                $match: { 'date': { "$gte": dateFilter, "$lt": tomorrow } }
             },
             {
                 $project:
@@ -234,11 +234,18 @@ module.exports = app => {
         ])
             .then(async records => {
                 var addedAgenda = []
-                await _completeAgenda(dateFilter)
+                await _completeAgenda(dateFilter, records)
                     .then(newAgenda => {
                         addedAgenda = [...records, ...newAgenda]
                     })
                 return addedAgenda
+            })
+            .then (fullAgenda => {
+                fullAgenda.sort((a, b) => {
+                    if (a.initialTime > b.initialTime) return 1
+                    else return -1
+                })
+                return fullAgenda
             })
             .then(record => {
                 return res.json({
@@ -254,11 +261,11 @@ module.exports = app => {
             })
     })
 
-    const _completeAgenda = async (dateFilter) => {
+    const _completeAgenda = async (dateFilter, busyRecs) => {
         let refDay = (dateFilter.getDay() + 1).toString()
         var emptyAgenda = []
         await ModelProfessional.find()
-        .then(result => {
+            .then(result => {
                 var newId = 0
                 for (let professional of result) {
                     for (let profAvail of professional.availability) {
@@ -267,24 +274,29 @@ module.exports = app => {
                         var initialTime = new Date(profAvail.initialTime.getTime())
                         var nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
                         while (nextTime <= profAvail.finalTime) {
-                            newId++
-                            emptyAgenda.push(
-                                {
-                                    "_id": newId,
-                                    "date": dateFilter,
-                                    "initialTime": initialTime,
-                                    "finalTime": nextTime,
-                                    "professional_id": professional._id,
-                                    "professional_name": [professional.name],
-                                    "patient_id": "",
-                                    "patient_name": [""],
-                                    "patient_phone": [""],
-                                    "procedure_id": "",
-                                    "procedure_name": [""],
-                                    "planName": "",
-                                    "status": ""
-                                }
-                            )
+                            var alreadyExists = busyRecs.find(element => {
+                                return (element.initialTime >= initialTime && element.finalTime <= nextTime)
+                            })
+                            if (!alreadyExists) {
+                                newId++
+                                emptyAgenda.push(
+                                    {
+                                        "_id": newId,
+                                        "date": dateFilter,
+                                        "initialTime": initialTime,
+                                        "finalTime": nextTime,
+                                        "professional_id": professional._id,
+                                        "professional_name": [professional.name],
+                                        "patient_id": "",
+                                        "patient_name": [""],
+                                        "patient_phone": [""],
+                                        "procedure_id": "",
+                                        "procedure_name": [""],
+                                        "planName": "",
+                                        "status": ""
+                                    }
+                                )
+                            }
                             initialTime = nextTime
                             nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
                         }
