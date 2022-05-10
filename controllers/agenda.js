@@ -176,7 +176,9 @@ module.exports = app => {
 
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
-        let dateFilter = new Date(query.dateFilter)
+        let dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
+        let tomorrow = new Date(dateFilter)
+        tomorrow.setDate(tomorrow.getDate + 1);
         await ModelName.aggregate([
             {
                 $lookup:
@@ -206,7 +208,7 @@ module.exports = app => {
                 }
             },
             {
-                $match: { 'date': { "$gte": dateFilter } }
+                $match: {'date': { "$gte": dateFilter, "$lt": tomorrow }}
             },
             {
                 $project:
