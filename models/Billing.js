@@ -3,14 +3,14 @@ const Schema = mongoose.Schema
 
 const billing = new Schema(
     {
-        covenantplan_id: mongoose.ObjectId,
-        procedure_id: mongoose.ObjectId,
+        attendanceDate: Date,
         patient_id: mongoose.ObjectId,
         professional_id: mongoose.ObjectId,
-        attendanceDate: Date,
+        procedure_id: mongoose.ObjectId,
+        covenantplan_id: mongoose.ObjectId,
         amount: Number,
-        // + fields to control the billing process
         agenda_id: mongoose.ObjectId,
+        status: String
     },
     { timestamps: true }
 )
