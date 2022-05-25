@@ -57,9 +57,9 @@ module.exports = app => {
       .then((record) => {
         return res.json({
           error: false,
-          record,
+          record, 
         });
-      })
+      }) 
       .catch((err) => {
         return res.json({
           error: true,
@@ -69,11 +69,12 @@ module.exports = app => {
   });
 
   app.get(routeName + "id/:id", tokenok, async (req, res) => {
+    console.log(req.params.id)
     const id = mongoose.Types.ObjectId(req.params.id);
     // await ModelName.findById(req.params.id)
     await ModelName.aggregate([
       // {
-      //   $lookup: {
+      //   $lookup: { 
       //     from: "city",
       //     localField: "city_id",
       //     foreignField: "_id",
