@@ -13,7 +13,7 @@ module.exports = app => {
                 return res.json({
                     error: false,
                     record
-                })
+                }) 
             }).catch((err) => {
                 return res.json({
                     error: true,
@@ -21,7 +21,7 @@ module.exports = app => {
                 })
             })
     })
-
+ 
     app.get(routeName + "name/:name", tokenok, async (req, res) => {
         let searchParm = { '$and': [{ 'name': { '$gte': req.params.name } }, { 'name': { '$lte': req.params.name + '~' } }] }
         await ModelName.find(searchParm)
@@ -61,9 +61,9 @@ module.exports = app => {
                 return res.json({
                     error: false,
                     record,
-                })
+                }) 
             })
-            .catch((err) => {
+            .catch((err) => { 
                 return res.json({
                     error: true,
                     message: err,
