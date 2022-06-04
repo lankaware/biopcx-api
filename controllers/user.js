@@ -142,10 +142,9 @@ module.exports = app => {
     })
 
     app.post(routeName + 'login/:login', async (req, res) => {
-
         let searchParm = { login: req.params.login }
         let record = await ModelName.find(searchParm)
-            .select('name login passw')
+            .select('name login passw role')
             .catch((err) => {
                 return res.json({
                     error: true,
@@ -155,7 +154,7 @@ module.exports = app => {
         if (!record[0]) {
             return res.json({
                 error: true,
-                message: 'Usuário ou sehna inválidos.'
+                message: 'Usuário ou senha inválidos.'
             })
         }
         const pw1 = CryptoJS.AES.decrypt(req.body.passw, process.env.SECRET).toString(CryptoJS.enc.Utf8);
@@ -164,16 +163,17 @@ module.exports = app => {
         if (pw1 !== pw2) {
             return res.json({
                 error: true,
-                message: 'Usuário oou senha inválidos.'
+                message: 'Usuário ou senha inválidos.'
             })
         }
-
+        console.log(record, "record")
         const passw = JSON.stringify(req.body.passw)
         var privatekey = process.env.SECRET
         var token = jsonwebtoken.sign({ passw }, privatekey, {
             expiresIn: 7200  // 2hr = 7200 - 12hrs = 43200
         })
         req.body.name = record[0].name
+        req.body.role = record[0].role
         req.body.token = token
         return res.json(req.body)
     })
