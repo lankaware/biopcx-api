@@ -158,7 +158,6 @@ module.exports = app => {
                 $sort: { 'name': 1 },
             }
         ])
-
             .then((record) => {
                 return res.json({
                     error: false,

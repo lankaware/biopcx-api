@@ -166,7 +166,6 @@ module.exports = app => {
                 message: 'Usuário ou senha inválidos.'
             })
         }
-        console.log(record, "record")
         const passw = JSON.stringify(req.body.passw)
         var privatekey = process.env.SECRET
         var token = jsonwebtoken.sign({ passw }, privatekey, {
