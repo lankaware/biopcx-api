@@ -49,12 +49,14 @@ module.exports = app => {
                     professional_id: '$professional_id',
                     professional_name: '$professional.name',
                     patient_id: '$patient_id',
-                    patient_name: '$patient.name',
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     patient_phone: '$patient.phone',
                     procedure_id: '$procedure_id',
                     procedure_name: '$procedure.name',
-                    planName: '$planName',
-                    status: '$status'
+                    // planName: '$planName',
+                    phone: 1,
+                    email: 1,
+                    status: 1,
                 }
             },
             {
@@ -118,11 +120,14 @@ module.exports = app => {
                     professional_id: '$professional_id',
                     professional_name: '$professional.name',
                     patient_id: '$patient_id',
-                    patient_name: '$patient.name',
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     procedure_id: '$procedure_id',
                     procedure_name: '$procedure.name',
-                    planName: '$planName',
-                    status: '$status'
+                    covenant_id: '$covenant_id',
+                    covenantplan_id: '$covenantplan_id',
+                    phone: 1,
+                    email: 1,
+                    status: 1,
                 }
             },
             {
@@ -176,9 +181,19 @@ module.exports = app => {
 
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
-        let dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
-        let tomorrow = new Date(dateFilter)
-        tomorrow.setDate(tomorrow.getDate() + 1)
+        let filters = []
+        let dateFilter, tomorrow
+        if (query.dateFilter) {
+            dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
+            tomorrow = new Date(dateFilter)
+            tomorrow.setDate(tomorrow.getDate() + 1)
+            filters = [{ 'date': { "$gte": dateFilter, "$lt": tomorrow } }]
+        }
+        if (query.patientFilter) {
+            filters = [...filters, { patient_id:  mongoose.Types.ObjectId(query.patientFilter)}]
+        }
+        finalFilter = {$and: filters}
+
         await ModelName.aggregate([
             {
                 $lookup:
@@ -208,7 +223,7 @@ module.exports = app => {
                 }
             },
             {
-                $match: { 'date': { "$gte": dateFilter, "$lt": tomorrow } }
+                $match: finalFilter 
             },
             {
                 $project:
@@ -220,12 +235,15 @@ module.exports = app => {
                     professional_id: '$professional_id',
                     professional_name: '$professional.name',
                     patient_id: '$patient_id',
-                    patient_name: '$patient.name',
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     patient_phone: '$patient.phone',
                     procedure_id: '$procedure_id',
                     procedure_name: '$procedure.name',
-                    planName: '$planName',
-                    status: '$status'
+                    covenant_id: '$covenant_id',
+                    covenantplan_id: '$covenantplan_id',
+                    phone: 1,
+                    email: 1,
+                    status: 1,
                 }
             },
             {
@@ -235,12 +253,12 @@ module.exports = app => {
             .then(async records => {
                 var addedAgenda = []
                 await _completeAgenda(dateFilter, records)
-                    .then(newAgenda => {
-                        addedAgenda = [...records, ...newAgenda]
-                    })
+                .then(newAgenda => {
+                    addedAgenda = [...records, ...newAgenda]
+                })
                 return addedAgenda
             })
-            .then (fullAgenda => {
+            .then(fullAgenda => {
                 fullAgenda.sort((a, b) => {
                     if (a.initialTime > b.initialTime) return 1
                     else return -1
@@ -254,6 +272,7 @@ module.exports = app => {
                 })
             })
             .catch((err) => {
+                console.log('err', err)
                 return res.json({
                     error: true,
                     message: err
@@ -292,8 +311,13 @@ module.exports = app => {
                                         "patient_phone": [""],
                                         "procedure_id": "",
                                         "procedure_name": [""],
-                                        "planName": "",
-                                        "status": ""
+                                        "covenant_id": "",
+                                        "covenant_name": [""],
+                                        "covenantplan_id": "",
+                                        "covenantplan_name": [""],
+                                        "phone": "",
+                                        "email": "",
+                                        "status": "",
                                     }
                                 )
                             }

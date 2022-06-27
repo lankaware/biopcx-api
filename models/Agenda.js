@@ -9,7 +9,10 @@ const agenda = new Schema(
         professional_id: mongoose.ObjectId,
         patient_id: mongoose.ObjectId,
         procedure_id: mongoose.ObjectId,
-        planName: String,
+        covenant_id: mongoose.ObjectId,
+        covenantplan_id: mongoose.ObjectId,
+        phone: String,
+        email: String,
         status: String,
     },
     { timestamps: true }

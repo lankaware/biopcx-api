@@ -18,7 +18,7 @@ const patient = new Schema(
     city_id: mongoose.ObjectId,
     // state_id: ObjectId,
     covenant_id: mongoose.ObjectId,
-    covPlan: String,
+    covenantplan_id: mongoose.ObjectId,
     covRegistration: String,
     covValid: Date,
     birthDate: Date,

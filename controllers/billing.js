@@ -1,9 +1,34 @@
 const mongoose = require('mongoose')
 require('../models/Billing.js')
+require('../models/Price.js')
 const tokenok = require("../config/tokenValidate.js")
 
 const ModelName = mongoose.model("Billing")
 const routeName = "/billing"
+
+const ModelPrice = mongoose.model("Price")
+
+const _calcAmount = async (newObj) => {
+    let searchObj = {
+        covenant_id: mongoose.Types.ObjectId(newObj.covenant_id),
+        covenantplan_id: mongoose.Types.ObjectId(newObj.covenantplan_id),
+        procedure_id: mongoose.Types.ObjectId(newObj.procedure_id),
+    }
+    await ModelPrice.find(searchObj)
+        .then(result => {
+            console.log('result 1', result)
+            if (result[0])
+                newObj.amount = result[0].price
+        })
+        .catch((err) => {
+            console.log('err 1', err)
+            return res.json({
+                error: true,
+                message: err,
+            })
+        })
+    return newObj
+}
 
 module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
@@ -11,11 +36,11 @@ module.exports = app => {
         const dateDefault = new Date()
         const tempDate = dateDefault.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
         const stringDate = tempDate.substring(6, 10) + '-' + tempDate.substring(3, 5) + '-' + tempDate.substring(0, 2)
-        
+
         minDate = new Date(stringDate)
         maxDate = new Date(minDate)
         maxDate.setDate(maxDate.getDate() + 1)
-        
+
         await ModelName.aggregate([
             {
                 $lookup:
@@ -63,7 +88,7 @@ module.exports = app => {
                 }
             },
             {
-                $match: {$and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate  } }] }
+                $match: { $and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate } }] }
                 // $match: { 'attendanceDate': { "$gte": new Date("2020-01-01"), "$lt": new Date("2023-01-01") } }
             },
             {
@@ -72,7 +97,7 @@ module.exports = app => {
                     _id: 1,
                     attendanceDate: 1,
                     patient_id: 1,
-                    patient_name: '$patient.name',
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     professional_id: 1,
                     professional_name: '$professional.name',
                     procedure_id: 1,
@@ -82,7 +107,8 @@ module.exports = app => {
                     covenantplan_id: 1,
                     covenantplan_name: '$covenantplan.name',
                     amount: 1,
-                    status: '$status'
+                    status: '$status',
+                    agenda_id: 1,
                 }
             },
             {
@@ -147,8 +173,13 @@ module.exports = app => {
     })
 
     app.post(routeName, tokenok, async (req, res) => {
-        await ModelName.create(req.body)
+        let newObj = req.body
+        await _calcAmount(newObj)
+            .then(async newObj => {
+                return await ModelName.create(newObj)
+            })
             .then((record) => {
+                console.log('record 2', record)
                 return res.json({
                     error: false,
                     record,
@@ -166,19 +197,19 @@ module.exports = app => {
         let query = req.body
         let filters = []
         if (query.dateFilter) {
-            let dateFilter = new Date(query.dateFilter) 
+            let dateFilter = new Date(query.dateFilter)
             let tomorrow = new Date(dateFilter)
             tomorrow.setDate(tomorrow.getDate() + 1)
-            filters = [{ 'attendanceDate': { "$gte": dateFilter, "$lt": tomorrow } }] 
+            filters = [{ 'attendanceDate': { "$gte": dateFilter, "$lt": tomorrow } }]
         }
         if (query.patientFilter) {
-            filters = [...filters, { patient_id:  mongoose.Types.ObjectId(query.patientFilter)}]
+            filters = [...filters, { patient_id: mongoose.Types.ObjectId(query.patientFilter) }]
         }
         if (query.covenantFilter) {
-            filters = [...filters, { covenant_id:  mongoose.Types.ObjectId(query.covenantFilter)}]
+            filters = [...filters, { covenant_id: mongoose.Types.ObjectId(query.covenantFilter) }]
         }
 
-        finalFilter = {$and: filters}
+        finalFilter = { $and: filters }
         await ModelName.aggregate([
             {
                 $lookup:
@@ -226,7 +257,7 @@ module.exports = app => {
                 }
             },
             {
-                $match: finalFilter // { 'patient_id':  {'$eq': '616aafeda6d90071b813b1ea'}}
+                $match: finalFilter
             },
             {
                 $project:
@@ -234,9 +265,9 @@ module.exports = app => {
                     _id: 1,
                     attendanceDate: 1,
                     patient_id: 1,
-                    patient_name: ['$patient.name', ' ', '$patient.lastname'] ,
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     professional_id: 1,
-                    professional_name: '$professional.name'  ,
+                    professional_name: '$professional.name',
                     procedure_id: 1,
                     procedure_name: '$procedure.name',
                     covenant_id: 1,
@@ -244,7 +275,8 @@ module.exports = app => {
                     covenantplan_id: 1,
                     covenantplan_name: '$covenantplan.name',
                     amount: 1,
-                    status: '$status'
+                    status: '$status',
+                    agenda_id: 1,
                 }
             },
             {
@@ -295,4 +327,5 @@ module.exports = app => {
                 })
             })
     })
+
 }
