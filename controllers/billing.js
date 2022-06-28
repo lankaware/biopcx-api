@@ -172,6 +172,27 @@ module.exports = app => {
             })
     })
 
+    app.get(routeName + "/:billcovenant/:start/:end", tokenok, async (req, res) => {
+
+        const queryPar = { $and: [{ 'covenant_id':  mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }] }
+        await ModelName.find(queryPar)
+            .sort({ 'DATA': 1 })
+            .then((billingList) => {
+                console.log(billingList, billingList)
+                return res.json({
+                    error: false,
+                    billingList,
+                })
+            })
+            .catch((err) => {
+                console.log(err)
+                return res.json({
+                    error: true,
+                    message: "Nota não encontrada.",
+                })
+            })
+    })
+
     app.post(routeName, tokenok, async (req, res) => {
         let newObj = req.body
         await _calcAmount(newObj)
