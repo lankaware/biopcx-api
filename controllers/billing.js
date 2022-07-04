@@ -174,9 +174,83 @@ module.exports = app => {
 
     app.get(routeName + "/:billcovenant/:start/:end", tokenok, async (req, res) => {
 
-        const queryPar = { $and: [{ 'covenant_id':  mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }] }
-        await ModelName.find(queryPar)
-            .sort({ 'DATA': 1 })
+        // const queryPar = { $and: [{ 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }] }
+        // await ModelName.find(queryPar)
+        //     .sort({ 'DATA': 1 })
+        await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'professionals',
+                    localField: 'professional_id',
+                    foreignField: '_id',
+                    as: 'professional'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'patients',
+                    localField: 'patient_id',
+                    foreignField: '_id',
+                    as: 'patient'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'procedures',
+                    localField: 'procedure_id',
+                    foreignField: '_id',
+                    as: 'procedure'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'covenants',
+                    localField: 'covenant_id',
+                    foreignField: '_id',
+                    as: 'covenant'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'covenantplans',
+                    localField: 'covenantplan_id',
+                    foreignField: '_id',
+                    as: 'covenantplan'
+                }
+            },
+            {
+                // $match: { $and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate } }] }
+                $match: { $and: [{ 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }, { 'amount': { $gte: 0 } }] }
+            },
+            {
+                $project:
+                {
+                    _id: 1,
+                    attendanceDate: 1,
+                    patient_id: 1,
+                    patient_name: ['$patient.name', ' ', '$patient.lastname'],
+                    professional_id: 1,
+                    professional_name: '$professional.name',
+                    procedure_id: 1,
+                    procedure_name: '$procedure.name',
+                    covenant_id: 1,
+                    covenant_name: '$covenant.name',
+                    covenantplan_id: 1,
+                    covenantplan_name: '$covenantplan.name',
+                    amount: 1,
+                    status: '$status',
+                    agenda_id: 1,
+                }
+            },
+            {
+                $sort: { 'attendanceDate': 1 },
+            }
+        ])
             .then((billingList) => {
                 console.log(billingList, billingList)
                 return res.json({
