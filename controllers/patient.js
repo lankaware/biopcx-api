@@ -61,9 +61,9 @@ module.exports = app => {
       .then((record) => {
         return res.json({
           error: false,
-          record, 
+          record,
         });
-      }) 
+      })
       .catch((err) => {
         return res.json({
           error: true,
@@ -188,7 +188,7 @@ module.exports = app => {
           freeTextOne: 1,
           freeTextTwoTitle: 1,
           freeTextTwo: 1,
-          alert:1,
+          alert: 1,
           prescription: 1,
           request: 1,
           createdAt: 1,
@@ -210,14 +210,32 @@ module.exports = app => {
   });
 
   app.post(routeName, tokenok, async (req, res) => {
-    await ModelName.create(req.body)
+    var newObj = {}
+    var newReg = 0
+    let queryCod = { "$group": { "_id": {}, "lastReg": { "$max": "$internalRegister" } } }
+    await ModelName.aggregate([queryCod])
+    .then(async q => {
+        newReg = q[0].lastReg + 1
+        if (!req.body.internalRegister) {
+          newObj = Object.assign(req.body, { 'internalRegister': newReg })
+        } else {
+          newObj = Object.assign(req.body)
+        }
+        console.log('1 newObj', newObj)
+        return newObj
+      })
+      .then(async newObj => {
+        return await ModelName.create(newObj)
+      })
       .then((record) => {
+        console.log('2 record', record)
         return res.json({
           error: false,
           record,
         });
       })
       .catch((err) => {
+        console.log(err)
         return res.json({
           error: true,
           message: err,

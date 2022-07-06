@@ -6,7 +6,7 @@ const patient = new Schema(
     photo: String,
     name: String,
     lastname: String,
-    internalRegister: String,
+    internalRegister: Number,
     unit_id: mongoose.ObjectId,
     phone: String,
     email: String,
