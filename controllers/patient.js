@@ -214,8 +214,12 @@ module.exports = app => {
     var newReg = 0
     let queryCod = { "$group": { "_id": {}, "lastReg": { "$max": "$internalRegister" } } }
     await ModelName.aggregate([queryCod])
-    .then(async q => {
-        newReg = q[0].lastReg + 1
+      .then(async q => {
+        if (q[0]) {
+          newReg = q[0].lastReg + 1
+        } else {
+          newReg = 1
+        }
         if (!req.body.internalRegister) {
           newObj = Object.assign(req.body, { 'internalRegister': newReg })
         } else {
