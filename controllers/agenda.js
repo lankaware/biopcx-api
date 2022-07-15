@@ -281,7 +281,9 @@ module.exports = app => {
     })
 
     const _completeAgenda = async (dateFilter, busyRecs) => {
-        let refDay = (dateFilter.getDay() + 1).toString()
+        console.log('dateFilter', dateFilter)
+        let refDay = (dateFilter.getDay() + 0).toString()
+        console.log('refDay', refDay)
         var emptyAgenda = []
         await ModelProfessional.find()
             .then(result => {
@@ -291,6 +293,7 @@ module.exports = app => {
                         if (profAvail.weekDay !== refDay) continue
                         if (profAvail.interval === 0) continue
                         var initialTime = new Date(profAvail.initialTime.getTime())
+                        console.log('initialTime', initialTime)
                         var nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
                         while (nextTime <= profAvail.finalTime) {
                             var alreadyExists = busyRecs.find(element => {
