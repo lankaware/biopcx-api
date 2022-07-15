@@ -80,6 +80,7 @@ module.exports = app => {
                     specialty_id: '$specialty_id',
                     specialty_name: '$specialty.name',
                     crm: '$crm',
+                    cpf: '$cpf',
                     email: '$email',
                     phone: '$phone',
                     admissionDate: '$admissionDate',
@@ -98,13 +99,14 @@ module.exports = app => {
                 })
             }).catch((err) => {
                 return res.json({
-                    error: true,
+                    error: true, 
                     message: err
                 })
             })
     })
 
     app.post(routeName, tokenok, async (req, res) => {
+        console.log(req.body)
         await ModelName.create(req.body)
             .then((record) => {
                 return res.json({
