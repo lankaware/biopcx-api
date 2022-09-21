@@ -27,6 +27,7 @@ module.exports = app => {
           covenant_id: 1,
           covenantplan_id: 1,
           email: 1,
+          firstAppoint: 1,
         },
       },
       {
