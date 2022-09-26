@@ -244,6 +244,7 @@ module.exports = app => {
                     phone: 1,
                     email: 1,
                     status: 1,
+                    firstAppoint: '$patient.firstAppoint'
                 }
             },
             {
