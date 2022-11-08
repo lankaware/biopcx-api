@@ -269,10 +269,7 @@ module.exports = app => {
 
     app.post(routeName, tokenok, async (req, res) => {
         let newObj = req.body
-        await _calcAmount(newObj)
-            .then(async newObj => {
-                return await ModelName.create(newObj)
-            })
+        await ModelName.create(newObj)
             .then((record) => {
                 console.log('record 2', record)
                 return res.json({
@@ -287,7 +284,7 @@ module.exports = app => {
                 })
             })
     })
-
+    
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
         let filters = []
