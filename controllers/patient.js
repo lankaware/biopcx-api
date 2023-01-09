@@ -6,7 +6,7 @@ const ModelName = mongoose.model("Patient");
 const routeName = "/patient";
 
 module.exports = app => {
-  app.get(routeName, tokenok, async (req, res) => {
+  app.get(routeName, async (req, res) => {
     await ModelName.aggregate([
       {
         $lookup: {

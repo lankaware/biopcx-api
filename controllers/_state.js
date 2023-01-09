@@ -6,7 +6,7 @@ const ModelName = mongoose.model("State")
 const routeName = "/state"
 
 module.exports = app => {
-    app.get(routeName, tokenok, async (req, res) => {
+    app.get(routeName, async (req, res) => {
         await ModelName.find()
             .sort('name')
             .then((record) => {

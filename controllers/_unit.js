@@ -7,7 +7,7 @@ const ModelName = mongoose.model("Unit")
 const routeName = "/unit"
 
 module.exports = app => {
-    app.get(routeName, tokenok, async (req, res) => {
+    app.get(routeName, async (req, res) => {
         await ModelName.find()
             .sort('name')
             .then((record) => {

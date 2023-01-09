@@ -6,7 +6,7 @@ const ModelName = mongoose.model("CovenantPlan")
 const routeName = "/covenantplan"
 
 module.exports = app => {
-    app.get(routeName, tokenok, async (req, res) => {  // + _tn
+    app.get(routeName, async (req, res) => {  // + _tn
         await ModelName.find()
             .sort('name')
             .then((record) => {
