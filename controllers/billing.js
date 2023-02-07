@@ -173,10 +173,24 @@ module.exports = app => {
     })
 
     app.get(routeName + "/:billcovenant/:start/:end", tokenok, async (req, res) => {
-
-        // const queryPar = { $and: [{ 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }] }
-        // await ModelName.find(queryPar)
-        //     .sort({ 'DATA': 1 })
+        console.log('req.params.billcovenant', req.params.billcovenant)
+        let matchPar = ''
+        if (req.params.billcovenant === '1000') {
+            matchPar = {
+                $and: [
+                    { 'attendanceDate': { $gte: new Date(req.params.start) } },
+                    { 'attendanceDate': { $lte: new Date(req.params.end) } },
+                    { 'amount': { $gte: 0 } }]
+            }
+        } else {
+            matchPar = {
+                $and: [
+                    { 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) },
+                    { 'attendanceDate': { $gte: new Date(req.params.start) } },
+                    { 'attendanceDate': { $lte: new Date(req.params.end) } },
+                    { 'amount': { $gte: 0 } }]
+            }
+        }
         await ModelName.aggregate([
             {
                 $lookup:
@@ -225,7 +239,7 @@ module.exports = app => {
             },
             {
                 // $match: { $and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate } }] }
-                $match: { $and: [{ 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) }, { 'attendanceDate': { $gte: new Date(req.params.start) } }, { 'attendanceDate': { $lte: new Date(req.params.end) } }, { 'amount': { $gte: 0 } }] }
+                $match: matchPar
             },
             {
                 $project:
@@ -248,11 +262,14 @@ module.exports = app => {
                 }
             },
             {
-                $sort: { 'attendanceDate': 1 },
+                $sort: { 
+                    'covenant_name': 1,
+                    'attendanceDate': 1,
+                 },
             }
         ])
             .then((billingList) => {
-                console.log(billingList, billingList)
+                // console.log('billingList', billingList)
                 return res.json({
                     error: false,
                     billingList,
@@ -284,7 +301,7 @@ module.exports = app => {
                 })
             })
     })
-    
+
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
         let filters = []
