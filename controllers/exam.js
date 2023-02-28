@@ -39,6 +39,23 @@ module.exports = app => {
             })
     })
 
+    app.get(routeName + "namexact/:name", tokenok, async (req, res) => {
+        let searchParm = { 'name': req.params.name }
+        await ModelName.find(searchParm)
+            .select('_id')
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record,
+                })
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
+    })
+
     app.get(routeName + "id/:id", tokenok, async (req, res) => {
         await ModelName.findById(req.params.id)
             .then((record) => {

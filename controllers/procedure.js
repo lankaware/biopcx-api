@@ -41,6 +41,23 @@ module.exports = app => {
             })
     })
 
+    app.get(routeName + "namexact/:name", tokenok, async (req, res) => {
+        let searchParm = { 'name': req.params.name }
+        await ModelName.find(searchParm)
+            .select('_id')
+            .then((record) => {
+                return res.json({
+                    error: false,
+                    record,
+                })
+            }).catch((err) => {
+                return res.json({
+                    error: true,
+                    message: err
+                })
+            })
+    })
+
     app.get(routeName + "value/:cov/:plan", tokenok, async (req, res) => {
         // let searchParm = { '$and': [{ 'name': { '$gte': req.params.name } }, { 'name': { '$lte': req.params.name + '~' } }] }
         var newRecord = []
