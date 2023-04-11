@@ -14,6 +14,7 @@ const professional = new Schema(
         cns: String,
         cbo: String,
         internal: Boolean,
+        user_id: mongoose.ObjectId,
         availability: [
             {
                 procedure_id: mongoose.ObjectId,

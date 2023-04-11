@@ -40,6 +40,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 $project:
                 {
                     _id: '$_id',
@@ -57,6 +66,8 @@ module.exports = app => {
                     phone: 1,
                     email: 1,
                     status: 1,
+                    unit_id: '$unit_id',
+                    unit_name: '$unit.name',
                 }
             },
             {
@@ -108,6 +119,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 $match: { '_id': _id }
             },
             {
@@ -128,6 +148,7 @@ module.exports = app => {
                     phone: 1,
                     email: 1,
                     status: 1,
+                    unit_id: '$unit_id',
                 }
             },
             {
@@ -223,6 +244,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 $match: finalFilter 
             },
             {
@@ -244,7 +274,8 @@ module.exports = app => {
                     phone: 1,
                     email: 1,
                     status: 1,
-                    firstAppoint: '$patient.firstAppoint'
+                    firstAppoint: '$patient.firstAppoint',
+                    unit_id: '$unit_id',
                 }
             },
             {
@@ -319,6 +350,7 @@ module.exports = app => {
                                         "phone": "",
                                         "email": "",
                                         "status": "",
+                                        "unit_id": "",
                                     }
                                 )
                             }

@@ -88,6 +88,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 $match: { $and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate } }] }
                 // $match: { 'attendanceDate': { "$gte": new Date("2020-01-01"), "$lt": new Date("2023-01-01") } }
             },
@@ -109,6 +118,8 @@ module.exports = app => {
                     amount: 1,
                     status: '$status',
                     agenda_id: 1,
+                    unit_id: 1,
+                    unit_name: '$unit.name',
                 }
             },
             {
@@ -238,6 +249,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 // $match: { $and: [{ 'attendanceDate': { "$gte": minDate, "$lt": maxDate } }] }
                 $match: matchPar
             },
@@ -259,6 +279,8 @@ module.exports = app => {
                     amount: 1,
                     status: '$status',
                     agenda_id: 1,
+                    unit_id: 1,
+                    unit_name: '$unit.name',
                 }
             },
             {
@@ -366,6 +388,15 @@ module.exports = app => {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'unit',
+                    localField: 'unit_id',
+                    foreignField: '_id',
+                    as: 'name'
+                }
+            },
+            {
                 $match: finalFilter
             },
             {
@@ -386,6 +417,8 @@ module.exports = app => {
                     amount: 1,
                     status: '$status',
                     agenda_id: 1,
+                    unit_id: 1,
+                    unit_name: '$unit.name',
                 }
             },
             {

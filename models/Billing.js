@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const billing = new Schema(
     {
+        unit_id: mongoose.ObjectId,
         attendanceDate: Date,
         patient_id: mongoose.ObjectId,
         professional_id: mongoose.ObjectId,

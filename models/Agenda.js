@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const agenda = new Schema(
     {
+        unit_id: mongoose.ObjectId,
         date: Date,
         initialTime: Date,
         finalTime: Date,
