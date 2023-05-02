@@ -77,7 +77,9 @@ module.exports = app => {
         let recObj = {
             name: req.body.name,
             login: req.body.login,
-            passw: req.body.passw
+            passw: req.body.passw,
+            role: req.body.role,
+            professional_id: req.body.professional_id
         }
         await ModelName.create(recObj)
             .then((record) => {
@@ -145,8 +147,36 @@ module.exports = app => {
         console.log('login', req.params.login)
 
         let searchParm = { login: req.params.login }
-        let record = await ModelName.find(searchParm)
-            .select('name login passw role')
+        // let record = await ModelName.find(searchParm)
+        // .select('name login passw role')
+        let record = await ModelName.aggregate([
+            {
+                $lookup:
+                {
+                    from: 'professionals',
+                    localField: 'professional_id',
+                    foreignField: '_id',
+                    as: 'professional'
+                }
+            },
+            {
+                $match: searchParm
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    login: 1,
+                    passw: 1,
+                    role: 1,
+                    professional_id: 1,
+                    professional_name: '$professional.name'
+                }
+            },
+            {
+                $sort: { 'name': 1 },
+            }
+        ])
             .catch((err) => {
                 return res.json({
                     error: true,
@@ -158,7 +188,7 @@ module.exports = app => {
                 error: true,
                 message: 'Usuário ou senha inválidos.'
             })
-        }   
+        }
 
         const pw1 = CryptoJS.AES.decrypt(req.body.passw, process.env.SECRET).toString(CryptoJS.enc.Utf8);
         const pw2 = CryptoJS.AES.decrypt(record[0].passw, process.env.SECRET).toString(CryptoJS.enc.Utf8);
@@ -170,7 +200,6 @@ module.exports = app => {
             })
         }
         const passw = JSON.stringify(req.body.passw)
-
         var privatekey = process.env.SECRET
         var token = jsonwebtoken.sign({ passw }, privatekey, {
             expiresIn: 7200  // 2hr = 7200 - 12hrs = 43200
@@ -178,6 +207,17 @@ module.exports = app => {
         req.body.name = record[0].name
         req.body.role = record[0].role
         req.body.token = token
+        req.body.professionalid = record[0].professional_id
+        req.body.professionalname = record[0].professional_name
+
+        await ModelName.updateOne({ _id: record[0]._id }, { userunit: req.body.userunit })
+            .then(_ => {
+                console.log('Ok')
+            })
+            .catch((err) => {
+                console.log('erro unit', err)
+            })
+
         return res.json(req.body)
     })
 }

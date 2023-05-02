@@ -7,6 +7,8 @@ const user = new Schema(
         login: String,
         passw: String,
         role: String,
+        professional_id: mongoose.ObjectId,
+        userunit: mongoose.ObjectId,
     },
     { timestamps: true }
 )
