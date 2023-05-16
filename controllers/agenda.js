@@ -267,6 +267,7 @@ module.exports = app => {
                     patient_id: '$patient_id',
                     patient_name: ['$patient.name', ' ', '$patient.lastname'],
                     patient_phone: '$patient.phone',
+                    patient_internalRegister: '$patient.internalRegister',
                     procedure_id: '$procedure_id',
                     procedure_name: '$procedure.name',
                     covenant_id: '$covenant_id',
