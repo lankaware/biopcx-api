@@ -41,10 +41,10 @@ module.exports = app => {
             })
     })
 
-    app.get(routeName + "login/:login", tokenok, async (req, res) => {
+    app.get(routeName + "login/:login", async (req, res) => {
         let searchParm = { login: req.params.login }
         await ModelName.find(searchParm)
-            .select('name login')
+            .select('name login userunit')
             .then((record) => {
                 return res.json({
                     error: false,
@@ -174,7 +174,7 @@ module.exports = app => {
                     passw: 1,
                     role: 1,
                     professional_id: 1,
-                    professional_name: '$professional.name'
+                    professional_name: '$professional.name',
                 }
             },
             {

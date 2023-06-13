@@ -202,13 +202,13 @@ module.exports = app => {
 
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
-        let filters = []
+        let filters = [{$or: [{unit_id: mongoose.Types.ObjectId(query.unitcontext)}, {unit_id: null}]}]
         let dateFilter, tomorrow
         if (query.dateFilter) {
             dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
             tomorrow = new Date(dateFilter)
             tomorrow.setDate(tomorrow.getDate() + 1)
-            filters = [{ 'date': { "$gte": dateFilter, "$lt": tomorrow } }]
+            filters = [...filters, { 'date': { "$gte": dateFilter, "$lt": tomorrow } }]
         }
         if (query.patientFilter) {
             filters = [...filters, { patient_id:  mongoose.Types.ObjectId(query.patientFilter)}]
@@ -285,7 +285,8 @@ module.exports = app => {
         ])
             .then(async records => {
                 var addedAgenda = []
-                await _completeAgenda(dateFilter, records)
+                // await _completeAgenda(dateFilter, records, mongoose.Types.ObjectId(query.unitcontext))
+                await _completeAgenda(dateFilter, records, query.unitcontext)
                 .then(newAgenda => {
                     addedAgenda = [...records, ...newAgenda]
                 })
@@ -313,7 +314,7 @@ module.exports = app => {
             })
     })
 
-    const _completeAgenda = async (dateFilter, busyRecs) => {
+    const _completeAgenda = async (dateFilter, busyRecs, unitcontext) => {
         let refDay = (dateFilter.getDay() + 0).toString()
         var emptyAgenda = []
         await ModelProfessional.find()
@@ -323,6 +324,7 @@ module.exports = app => {
                     for (let profAvail of professional.availability) {
                         if (profAvail.weekDay !== refDay) continue
                         if (profAvail.interval === 0) continue
+                        if (profAvail.unit_id && (profAvail.unit_id).toString() !== unitcontext) continue
                         var initialTime = new Date(profAvail.initialTime.getTime())
                         var nextTime = new Date(initialTime.getTime() + profAvail.interval * 60000)
                         while (nextTime <= profAvail.finalTime) {
@@ -351,7 +353,7 @@ module.exports = app => {
                                         "phone": "",
                                         "email": "",
                                         "status": "",
-                                        "unit_id": "",
+                                        "unit_id": profAvail.unit_id,
                                     }
                                 )
                             }

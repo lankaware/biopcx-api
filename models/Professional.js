@@ -21,6 +21,7 @@ const professional = new Schema(
                 initialTime: Date,
                 finalTime: Date,
                 interval: Number,
+                unit_id: mongoose.ObjectId,
             }
         ]
     },
