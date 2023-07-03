@@ -8,7 +8,8 @@ const CryptoJS = require('crypto-js')
 
 module.exports = app => {
     app.get(routeName, tokenok, async (req, res) => {
-        await ModelName.find()
+        let searchParm = { name: {$ne: '$'} }
+        await ModelName.find(searchParm)
             .sort('name')
             .then((record) => {
                 return res.json({
