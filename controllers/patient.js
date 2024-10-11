@@ -75,7 +75,7 @@ module.exports = app => {
 
   app.get(routeName + "id/:id", tokenok, async (req, res) => {
     console.log(req.params.id)
-    const id = mongoose.Types.ObjectId(req.params.id);
+    const id = new mongoose.Types.ObjectId(req.params.id);
     // await ModelName.findById(req.params.id)
     await ModelName.aggregate([
       // {

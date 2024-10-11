@@ -67,9 +67,9 @@ module.exports = app => {
                 for (item of record) {
                     let covValue = 0
                     let searchObj = {
-                        covenant_id: mongoose.Types.ObjectId(req.params.cov),
-                        covenantplan_id: mongoose.Types.ObjectId(req.params.plan),
-                        procedure_id: mongoose.Types.ObjectId(item._id),
+                        covenant_id: new mongoose.Types.ObjectId(req.params.cov),
+                        covenantplan_id: new mongoose.Types.ObjectId(req.params.plan),
+                        procedure_id: new mongoose.Types.ObjectId(item._id),
                     }
                     await ModelPrice.find(searchObj)
                         .then(result => {
@@ -96,9 +96,9 @@ module.exports = app => {
     const _calcAmount = async (covId, covPlan, covProc) => {
         let covValue = 0
         let searchObj = {
-            covenant_id: mongoose.Types.ObjectId(covId),
-            covenantplan_id: mongoose.Types.ObjectId(covPlan),
-            procedure_id: mongoose.Types.ObjectId(covProc),
+            covenant_id: new mongoose.Types.ObjectId(covId),
+            covenantplan_id: new mongoose.Types.ObjectId(covPlan),
+            procedure_id: new mongoose.Types.ObjectId(covProc),
         }
         await ModelPrice.find(searchObj)
             .then(result => {

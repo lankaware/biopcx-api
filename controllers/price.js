@@ -55,7 +55,7 @@ module.exports = app => {
     })
 
     app.get(routeName + "covenant/:id", tokenok, async (req, res) => {   // + _tn
-        const _id = mongoose.Types.ObjectId(req.params.id)
+        const _id = new mongoose.Types.ObjectId(req.params.id)
         await ModelName.aggregate([
             {
                 $lookup: {

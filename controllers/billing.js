@@ -10,9 +10,9 @@ const ModelPrice = mongoose.model("Price")
 
 const _calcAmount = async (newObj) => {
     let searchObj = {
-        covenant_id: mongoose.Types.ObjectId(newObj.covenant_id),
-        covenantplan_id: mongoose.Types.ObjectId(newObj.covenantplan_id),
-        procedure_id: mongoose.Types.ObjectId(newObj.procedure_id),
+        covenant_id: new mongoose.Types.ObjectId(newObj.covenant_id),
+        covenantplan_id: new mongoose.Types.ObjectId(newObj.covenantplan_id),
+        procedure_id: new mongoose.Types.ObjectId(newObj.procedure_id),
     }
     await ModelPrice.find(searchObj)
         .then(result => {
@@ -196,7 +196,7 @@ module.exports = app => {
         } else {
             matchPar = {
                 $and: [
-                    { 'covenant_id': mongoose.Types.ObjectId(req.params.billcovenant) },
+                    { 'covenant_id': new mongoose.Types.ObjectId(req.params.billcovenant) },
                     { 'attendanceDate': { $gte: new Date(req.params.start) } },
                     { 'attendanceDate': { $lte: new Date(req.params.end) } },
                     { 'amount': { $gte: 0 } }]
@@ -334,10 +334,10 @@ module.exports = app => {
             filters = [{ 'attendanceDate': { "$gte": dateFilter, "$lt": tomorrow } }]
         }
         if (query.patientFilter) {
-            filters = [...filters, { patient_id: mongoose.Types.ObjectId(query.patientFilter) }]
+            filters = [...filters, { patient_id: new mongoose.Types.ObjectId(query.patientFilter) }]
         }
         if (query.covenantFilter) {
-            filters = [...filters, { covenant_id: mongoose.Types.ObjectId(query.covenantFilter) }]
+            filters = [...filters, { covenant_id: new mongoose.Types.ObjectId(query.covenantFilter) }]
         }
 
         finalFilter = { $and: filters }

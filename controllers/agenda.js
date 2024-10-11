@@ -89,7 +89,7 @@ module.exports = app => {
 
     app.get(routeName + "id/:id", async (req, res) => {
 
-        const _id = mongoose.Types.ObjectId(req.params.id)
+        const _id = new mongoose.Types.ObjectId(req.params.id)
         await ModelName.aggregate([
             {
                 $lookup:
@@ -202,7 +202,7 @@ module.exports = app => {
 
     app.put(routeName, tokenok, async (req, res) => {
         let query = req.body
-        let filters = [{$or: [{unit_id: mongoose.Types.ObjectId(query.unitcontext)}, {unit_id: null}]}]
+        let filters = [{$or: [{unit_id: new mongoose.Types.ObjectId(query.unitcontext)}, {unit_id: null}]}]
         let dateFilter, tomorrow
         if (query.dateFilter) {
             dateFilter = new Date(query.dateFilter)  // ,  "$lt": new Date(query.dateFilter)
@@ -211,7 +211,7 @@ module.exports = app => {
             filters = [...filters, { 'date': { "$gte": dateFilter, "$lt": tomorrow } }]
         }
         if (query.patientFilter) {
-            filters = [...filters, { patient_id:  mongoose.Types.ObjectId(query.patientFilter)}]
+            filters = [...filters, { patient_id:  new mongoose.Types.ObjectId(query.patientFilter)}]
         }
         finalFilter = {$and: filters}
 

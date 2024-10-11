@@ -57,7 +57,7 @@ module.exports = app => {
 
     app.get(routeName + "id/:id", tokenok, async (req, res) => {
         // await ModelName.findById(req.params.id)
-        const _id = mongoose.Types.ObjectId(req.params.id)
+        const _id = new mongoose.Types.ObjectId(req.params.id)
         await ModelName.aggregate([
             {
                 $lookup:

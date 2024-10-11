@@ -82,7 +82,7 @@ module.exports = app => {
             role: req.body.role,
         }
         if (req.body.professional_id)
-            recObj = { ...recObj, professional_id: mongoose.Types.ObjectId(req.body.professional_id) }
+            recObj = { ...recObj, professional_id: new mongoose.Types.ObjectId(req.body.professional_id) }
 
         await ModelName.create(recObj)
             .then((record) => {
